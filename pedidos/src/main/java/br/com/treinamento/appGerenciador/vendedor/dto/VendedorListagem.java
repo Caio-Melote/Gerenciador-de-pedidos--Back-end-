@@ -19,7 +19,7 @@ public class VendedorListagem {
         this.idVendedor = vendedor.getIdVendedor(); 
         this.nome = vendedor.getNome();    
         this.email = vendedor.getEmail(); 
-        this.cpf_vendedor = vendedor.getCpf_vendedor();   
+        this.cpf_vendedor = vendedor.getCpfVendedor();   
     }
 }
 

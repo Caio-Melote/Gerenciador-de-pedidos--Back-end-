@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import br.com.treinamento.appGerenciador.model.Produto;
 import br.com.treinamento.appGerenciador.model.Vendedor;
 
 public interface VendedorRepository extends JpaRepository<Vendedor, Long>{
@@ -14,10 +13,10 @@ public interface VendedorRepository extends JpaRepository<Vendedor, Long>{
 	 @Query("SELECT v FROM Vendedor v "
 	            + "WHERE (:nome IS NULL OR v.nome LIKE %:nome%) "
 	            + "AND (:email IS NULL OR v.email LIKE %:email%) "
-	            + "AND (:cpf_vendedor IS NULL OR v.cpf_vendedor LIKE %:cpf_vendedor%) "
+	            + "AND (:cpfVendedor IS NULL OR v.cpfVendedor LIKE %:cpfVendedor%) "
 	            + "AND v.ativo = TRUE")
-	    Page<Produto> findAllByFilters(@Param("nome") String nome, 
+	    Page<Vendedor> findAllByFilters(@Param("nome") String nome, 
 	            @Param("email") String email,
-	            @Param("cpf_vendedor") String cpf_vendedor,
+	            @Param("cpfVendedor") String cpfVendedor,
 	            Pageable pageable);
 }

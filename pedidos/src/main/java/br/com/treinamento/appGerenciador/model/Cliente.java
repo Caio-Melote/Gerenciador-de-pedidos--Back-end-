@@ -1,7 +1,7 @@
 package br.com.treinamento.appGerenciador.model;
 
-import br.com.treinamento.appGerenciador.vendedor.dto.VendedorDadosAtualizacao;
-import br.com.treinamento.appGerenciador.vendedor.dto.VendedorDadosCadastro;
+import br.com.treinamento.appGerenciador.cliente.dto.ClienteDadosAtualizacao;
+import br.com.treinamento.appGerenciador.cliente.dto.ClienteDadosCadastro;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,25 +12,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "Vendedor")
-@Table(name = "vendedor")
+@Entity(name = "Cliente")
+@Table(name = "cliente")
 @NoArgsConstructor
 @Getter
 @Setter
-public class Vendedor {
+public class Cliente {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long idVendedor;
+	private long idCliente;
 	private String nome;
 	private String email;
-	private String cpfVendedor;
+	private String cpfCliente;
+	private String telefone;
+	private String endereco;
 	private boolean ativo;
 
-	public Vendedor(VendedorDadosCadastro dados) {
+	public Cliente(ClienteDadosCadastro dados) {
 		this.nome = dados.getNome();
 		this.email = dados.getEmail();
-		this.cpfVendedor = dados.getCpfVendedor();
+		this.cpfCliente = dados.getCpfCliente();
+		this.telefone = dados.getTelefone();
+		this.endereco = dados.getEndereco();
 		this.ativo = true;
 	}
 
@@ -38,7 +42,7 @@ public class Vendedor {
 		this.ativo = false;
 	}
 
-	public void atualizarInformacoes(@Valid VendedorDadosAtualizacao dados) {
+	public void atualizarInformacoes(@Valid ClienteDadosAtualizacao dados) {
 
 		if (dados.getNome() != null) {
 			this.nome = dados.getNome();
@@ -48,8 +52,16 @@ public class Vendedor {
 			this.email = dados.getEmail();
 		}
 
-		if (dados.getCpfVendedor() != null) {
-			this.cpfVendedor = dados.getCpfVendedor();
+		if (dados.getCpfCliente() != null) {
+			this.cpfCliente = dados.getCpfCliente();
+		}
+		
+		if (dados.getTelefone() != null) {
+			this.telefone = dados.getTelefone();
+		}
+		
+		if (dados.getEndereco() != null) {
+			this.endereco = dados.getEndereco();
 		}
 
 		if (dados.isAtivo()) {

@@ -1,5 +1,0 @@
-package br.com.treinamento.pedidos.dao;
-
-public interface ProdutoRepository {
-
-}

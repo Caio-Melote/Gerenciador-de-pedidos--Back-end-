@@ -20,7 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import br.com.treinamento.appGerenciador.model.Produto;
 import br.com.treinamento.appGerenciador.produto.dto.ProdutoDadosAtualizacao;
 import br.com.treinamento.appGerenciador.produto.dto.ProdutoDadosCadastro;
-import br.com.treinamento.appGerenciador.produto.dto.VendedorListagem;
+import br.com.treinamento.appGerenciador.produto.dto.ProdutoListagem;
 import br.com.treinamento.appGerenciador.produto.dto.ProdutoRespostaPaginada;
 import br.com.treinamento.appGerenciador.produto.dto.ProdutoSemPaginacao;
 import br.com.treinamento.appGerenciador.repository.ProdutoRepository;
@@ -41,11 +41,9 @@ public class ProdutoController {
 			@RequestParam(required = false) String categoria, @RequestParam(required = false) Integer codigoBarras,
 			@RequestParam(required = false) Double precoMinimo, @RequestParam(required = false) Double precoMaximo) {
 
-		var page = produtoRepository
-				.findAllByFilters(nome, descricao, categoria, codigoBarras, precoMinimo, precoMaximo, paginacao)
-				.map(VendedorListagem::new);
+		var page = produtoRepository.findAllByFilters(nome, descricao, categoria, codigoBarras, precoMinimo, precoMaximo, paginacao).map(ProdutoListagem::new);
 
-		ProdutoRespostaPaginada<VendedorListagem> response = new ProdutoRespostaPaginada<>(page);
+		ProdutoRespostaPaginada<ProdutoListagem> response = new ProdutoRespostaPaginada<>(page);
 		return ResponseEntity.ok(response);
 	}
 
@@ -108,9 +106,12 @@ public class ProdutoController {
 	@PutMapping("/{id}/reativar")
 	public ResponseEntity reativa(@PathVariable Long id) {
 	    Produto produto = produtoRepository.findById(id).get();
-	    if (produto == null || produto.isAtivo()) {
+	    if (produto == null) {
 	        return ResponseEntity.notFound().build();
-	    } 
+	    }
+	    if (produto.isAtivo()){
+	    	return ResponseEntity.ok("Já está ativo!");
+	    }
 	    
 	    produto.setAtivo(true);
 	    produtoRepository.save(produto);

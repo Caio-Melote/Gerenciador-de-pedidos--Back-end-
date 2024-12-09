@@ -16,70 +16,72 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-import br.com.treinamento.appGerenciador.model.Vendedor;
-import br.com.treinamento.appGerenciador.repository.VendedorRepository;
-import br.com.treinamento.appGerenciador.vendedor.dto.VendedorDadosAtualizacao;
-import br.com.treinamento.appGerenciador.vendedor.dto.VendedorDadosCadastro;
-import br.com.treinamento.appGerenciador.vendedor.dto.VendedorListagem;
-import br.com.treinamento.appGerenciador.vendedor.dto.VendedorRespostaPaginada;
-import br.com.treinamento.appGerenciador.vendedor.dto.VendedorSemPaginacao;
+
+import br.com.treinamento.appGerenciador.cliente.dto.ClienteDadosAtualizacao;
+import br.com.treinamento.appGerenciador.cliente.dto.ClienteDadosCadastro;
+import br.com.treinamento.appGerenciador.cliente.dto.ClienteListagem;
+import br.com.treinamento.appGerenciador.cliente.dto.ClienteRespostaPaginada;
+import br.com.treinamento.appGerenciador.cliente.dto.ClienteSemPaginacao;
+import br.com.treinamento.appGerenciador.model.Cliente;
+import br.com.treinamento.appGerenciador.repository.ClienteRepository;
 import jakarta.validation.Valid;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/vendedor")
-public class VendedorController {
+@RequestMapping("/cliente")
+public class ClienteController {
 
 	@Autowired
-	private VendedorRepository vendedorRepository;
+	private ClienteRepository clienteRepository;
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping
 	public ResponseEntity listar(@PageableDefault(size = 20) Pageable paginacao,
 			@RequestParam(required = false) String nome, 
 			@RequestParam(required = false) String email,
-			@RequestParam(required = false) String cpf_vendedor) {
+			@RequestParam(required = false) String cpfCliente,
+			@RequestParam(required = false) String telefone,
+			@RequestParam(required = false) String endereco) {
 
-		var page = vendedorRepository.findAllByFilters(nome, email, cpf_vendedor, paginacao).map(VendedorListagem::new);
+		var page = clienteRepository.findAllByFilters(nome, email, cpfCliente, telefone, endereco, paginacao).map(ClienteListagem::new);
 
-		VendedorRespostaPaginada<VendedorListagem> response = new VendedorRespostaPaginada<>(page);
+		ClienteRespostaPaginada<ClienteListagem> response = new ClienteRespostaPaginada<>(page);
 		return ResponseEntity.ok(response);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@PostMapping
 	@Transactional
-	public ResponseEntity cadastrar(@RequestBody @Valid VendedorDadosCadastro dados, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity cadastrar(@RequestBody @Valid ClienteDadosCadastro dados, UriComponentsBuilder uriBuilder) {
 
-		Vendedor vendedor = new Vendedor(dados);
-		vendedorRepository.save(vendedor);
+		Cliente cliente = new Cliente(dados);
+		clienteRepository.save(cliente);
 
-		var uri = uriBuilder.path("/vendedor/{id}").buildAndExpand(vendedor.getIdVendedor()).toUri();
+		var uri = uriBuilder.path("/cliente/{id}").buildAndExpand(cliente.getIdCliente()).toUri();
 
-		return ResponseEntity.created(uri).body(new VendedorSemPaginacao(vendedor));
+		return ResponseEntity.created(uri).body(new ClienteSemPaginacao(cliente));
 	}
 	
 
 	@SuppressWarnings("rawtypes")
 	@PutMapping("/{id}")
 	@Transactional
-	public ResponseEntity atualizar(@PathVariable Long id, @RequestBody @Valid VendedorDadosAtualizacao dados) {
+	public ResponseEntity atualizar(@PathVariable Long id, @RequestBody @Valid ClienteDadosAtualizacao dados) {
 
-		var vendedorOptional = vendedorRepository.findById(id);
+		var clienteOptional = clienteRepository.findById(id);
 
-		if (vendedorOptional.get().isAtivo()) {
+		if (clienteOptional.get().isAtivo()) {
 
-			var vendedor = vendedorOptional.get();
-			vendedor.atualizarInformacoes(dados);
+			var cliente = clienteOptional.get();
+			cliente.atualizarInformacoes(dados);
 
-			vendedorRepository.save(vendedor);
+			clienteRepository.save(cliente);
 
-			var resposta = new VendedorSemPaginacao(vendedor);
+			var resposta = new ClienteSemPaginacao(cliente);
 
 			return ResponseEntity.ok(resposta);
 
 		} else {
-
 			return ResponseEntity.notFound().build();
 		}
 
@@ -90,11 +92,11 @@ public class VendedorController {
 	@Transactional
 	public ResponseEntity excluir(@PathVariable Long id) {
 
-		var vendedor = vendedorRepository.getReferenceById(id);
-		vendedor.isAtivo();
+		var cliente = clienteRepository.getReferenceById(id);
+		cliente.isAtivo();
 
-		if (vendedor.isAtivo()) {
-			vendedor.excluir();
+		if (cliente.isAtivo()) {
+			cliente.excluir();
 		} else {
 			return ResponseEntity.notFound().build();
 		}
@@ -105,17 +107,17 @@ public class VendedorController {
 	@SuppressWarnings("rawtypes")
 	@PutMapping("/{id}/reativar")
 	public ResponseEntity reativa(@PathVariable Long id) {
-	    Vendedor vendedor = vendedorRepository.findById(id).get();
-	    if (vendedor == null) {
+	    Cliente cliente = clienteRepository.findById(id).get();
+	    if (cliente == null) {
 	        return ResponseEntity.notFound().build();
 	    }
-	    if (vendedor.isAtivo()){
+	    if (cliente.isAtivo()){
 	    	return ResponseEntity.ok("Já está ativo!");
 	    }
 	    
-	    vendedor.setAtivo(true);
-	    vendedorRepository.save(vendedor);
-	    return ResponseEntity.ok(vendedor);
+	    cliente.setAtivo(true);
+	    clienteRepository.save(cliente);
+	    return ResponseEntity.ok(cliente);
 	}
 
 
@@ -123,10 +125,10 @@ public class VendedorController {
 	@GetMapping("/{id}")
 	public ResponseEntity pesquisar(@PathVariable Long id) {
 
-		var vendedor = vendedorRepository.findById(id);
-		if (vendedor.get().isAtivo()) {
+		var cliente = clienteRepository.findById(id);
+		if (cliente.get().isAtivo()) {
 
-			var resposta = ResponseEntity.ok(new VendedorSemPaginacao(vendedor.get()));
+			var resposta = ResponseEntity.ok(new ClienteSemPaginacao(cliente.get()));
 			return resposta;
 		} else {
 			return ResponseEntity.notFound().build();
