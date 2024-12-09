@@ -1,0 +1,5 @@
+package br.com.treinamento.pedidos.dto;
+
+public class ProdutoRespostaPaginada {
+
+}

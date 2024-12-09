@@ -1,0 +1,36 @@
+package br.com.treinamento.pedidos.dto;
+
+import java.time.LocalDate;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class DadosCadastroProduto {
+	
+	@NotBlank
+    private String nome;
+    
+    @NotBlank
+    private String descricao;
+    
+    @NotNull
+    private Double preco;   
+    
+    @NotBlank
+    private String categoria;  
+    
+    @NotNull
+    private long codigoBarras;
+    
+    @NotNull
+    private Boolean ativo;
+}

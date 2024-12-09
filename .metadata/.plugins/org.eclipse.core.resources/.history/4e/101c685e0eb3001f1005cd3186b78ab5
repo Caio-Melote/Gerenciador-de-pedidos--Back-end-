@@ -1,0 +1,5 @@
+package br.com.treinamento.pedidos.model;
+
+public class Produto {
+
+}

@@ -1,0 +1,22 @@
+1733749239304	Rename local variable 'franquia'
+1733749834456	Rename local variable 'franquiaOptional'
+1733751978513	Rename package 'br.com.treinamento.pedidos'
+1733752008184	Rename package 'br.com.treinamento.pedidos.controller'
+1733752030926	Rename package 'br.com.treinamento.pedidos.dto'
+1733752042800	Rename package 'br.com.treinamento.pedidos.infra'
+1733752053879	Rename package 'br.com.treinamento.pedidos.model'
+1733752063564	Rename package 'br.com.treinamento.pedidos.repository'
+1733752089548	Rename package 'br.com.treinamento.appGerenciador.dto'
+1733752104422	Rename type 'DadosAtualizacaoProduto'
+1733752115555	Rename type 'DadosCadastroProduto'
+1733752723700	Copy compilation unit
+1733753253837	Copy compilation unit
+1733753338289	Copy compilation unit
+1733753454336	Rename field 'produtoRepository'
+1733753507181	Copy compilation unit
+1733753518705	Rename type 'ProdutoListagem'
+1733753541745	Rename local variable 'produto'
+1733753679335	Rename type 'ProdutoListagem'
+1733753698418	Copy compilation unit
+1733753709822	Rename type 'ProdutoRespostaPaginada'
+1733754127028	Rename local variable 'produto'

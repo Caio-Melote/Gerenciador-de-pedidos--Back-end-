@@ -1,0 +1,23 @@
+package br.com.treinamento.pedidos.model;
+
+import java.time.LocalDateTime;
+
+import br.com.treinamento.pedidos.dto.DadosCadastroProduto;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity(name = "Produto")
+@Table(name = "produto")
+@NoArgsConstructor
+@Getter
+@Setter
+public class Produto {
+
+	@Entity(name = "Produto") @Table(name = "produto") @NoArgsConstructor @Getter @Setter public class Produto { @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private long idProduto; // Ajustado para idProduto private String nome; private String descricao; private double preco; // Adicionado atributo preco private int quantidadeEmEstoque; // Adicionado atributo quantidadeEmEstoque private String categoria; // Adicionado atributo categoria private String marca; // Adicionado atributo marca private LocalDate dataDeFabricacao; // Adicionado atributo dataDeFabricacao private LocalDate dataDeValidade; // Adicionado atributo dataDeValidade private LocalDateTime data; // Data de criação do produto (opcional) private Boolean ativo; public Produto(DadosCadastroProduto dados) { this.nome = dados.getNome(); this.descricao = dados.getDescricao(); this.preco = dados.getPreco(); // Ajustado para usar dados do DTO this.quantidadeEmEstoque = dados.getQuantidadeEmEstoque(); // Ajustado para usar dados do DTO this.categoria = dados.getCategoria(); // Ajustado para usar dados do DTO this.marca = dados.getMarca(); // Ajustado para usar dados do DTO this.dataDeFabricacao = dados.getDataDeFabricacao(); // Ajustado para usar dados do DTO this.dataDeValidade = dados.getDataDeValidade(); // Ajustado para usar dados do DTO this.data = LocalDateTime.now(); this.ativo = true;
+}

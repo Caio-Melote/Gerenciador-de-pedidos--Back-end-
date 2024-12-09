@@ -1,0 +1,26 @@
+package br.com.treinamento.pedidos.repository;
+
+import java.time.LocalDateTime;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import br.com.treinamento.pedidos.model.Produto;
+
+public interface ProdutoRepository extends JpaRepository<Produto, Long>{
+	
+	@Query("SELECT p FROM Produto p " + "WHERE (:nome IS NULL OR p.nome LIKE %:nome%) "
+			+ "AND (:descricao IS NULL OR p.descricao LIKE %:descricao%)"
+			+ "AND (:dataUltimaAtualizacaoStart IS NULL OR f.ultimaAtualizacao >= :data) "
+			+ "AND (:dataUltimaAtualizacaoEnd IS NULL OR f.ultimaAtualizacao <= :data) "
+			+ "AND p.ativo = TRUE")
+	Page<Produto> findAllByFilters(@Param("nome") String nome, 
+			@Param("descricao") String descricao,
+			@Param("dataUltimaAtualizacaoStart") LocalDateTime dataUltimaAtualizacaoStart,
+			@Param("dataUltimaAtualizacaoEnd") LocalDateTime dataUltimaAtualizacaoEnd,
+			Pageable pageable);
+	
+}
