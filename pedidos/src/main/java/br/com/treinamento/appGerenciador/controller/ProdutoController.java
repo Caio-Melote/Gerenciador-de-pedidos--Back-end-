@@ -55,7 +55,7 @@ public class ProdutoController {
 		var produto = new Produto(dados);
 		produtoRepository.save(produto);
 
-		var uri = uriBuilder.path("/franquia/{id}").buildAndExpand(produto.getIdProduto()).toUri();
+		var uri = uriBuilder.path("/produto/{id}").buildAndExpand(produto.getIdProduto()).toUri();
 
 		return ResponseEntity.created(uri).body(new ProdutoSemPaginacao(produto));
 	}
@@ -67,7 +67,7 @@ public class ProdutoController {
 
 		var produtoOptional = produtoRepository.findById(id);
 
-		if (produtoOptional.get().isAtivo()) {
+		if (produtoOptional.get().getAtivo()) {
 
 			var produto = produtoOptional.get();
 			produto.atualizarInformacoes(dados);
@@ -91,9 +91,9 @@ public class ProdutoController {
 	public ResponseEntity excluir(@PathVariable Long id) {
 
 		var produto = produtoRepository.getReferenceById(id);
-		produto.isAtivo();
+		produto.getAtivo();
 
-		if (produto.isAtivo()) {
+		if (produto.getAtivo()) {
 			produto.excluir();
 		} else {
 			return ResponseEntity.notFound().build();
@@ -109,7 +109,7 @@ public class ProdutoController {
 	    if (produto == null) {
 	        return ResponseEntity.notFound().build();
 	    }
-	    if (produto.isAtivo()){
+	    if (produto.getAtivo()){
 	    	return ResponseEntity.ok("Já está ativo!");
 	    }
 	    
@@ -124,7 +124,7 @@ public class ProdutoController {
 	public ResponseEntity pesquisar(@PathVariable Long id) {
 
 		var produto = produtoRepository.findById(id);
-		if (produto.get().isAtivo()) {
+		if (produto.get().getAtivo()) {
 
 			var resposta = ResponseEntity.ok(new ProdutoSemPaginacao(produto.get()));
 			return resposta;

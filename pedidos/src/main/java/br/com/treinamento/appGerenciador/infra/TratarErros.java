@@ -10,16 +10,22 @@ import jakarta.persistence.EntityNotFoundException;
 
 @RestControllerAdvice
 public class TratarErros {
-	
+
 	@SuppressWarnings("rawtypes")
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity erro404() {
 		return ResponseEntity.notFound().build();
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@ExceptionHandler(NoSuchElementException.class)
 	public ResponseEntity notFound() {
 		return ResponseEntity.notFound().build();
+	}
+
+	@SuppressWarnings("rawtypes")
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity handleIllegalArgumentException(IllegalArgumentException e) {
+		return ResponseEntity.badRequest().body(e.getMessage());
 	}
 }

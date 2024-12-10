@@ -21,13 +21,13 @@ public class Produto {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idProduto;  
+    private Long idProduto;  
     private String nome;
     private String descricao;
-    private double preco;  
+    private Double preco;  
     private String categoria;  
     private Integer codigoBarras;   
-    private boolean ativo; 
+    private Boolean ativo; 
     
     public Produto(ProdutoDadosCadastro dados) {
         this.nome = dados.getNome();

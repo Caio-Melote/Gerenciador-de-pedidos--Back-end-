@@ -21,13 +21,20 @@ public class Vendedor {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long idVendedor;
+	private Long idVendedor;
 	private String nome;
 	private String email;
 	private String cpfVendedor;
 	private boolean ativo;
 
 	public Vendedor(VendedorDadosCadastro dados) {
+		this.nome = dados.getNome();
+		this.email = dados.getEmail();
+		this.cpfVendedor = dados.getCpfVendedor();
+		this.ativo = true;
+	}
+	
+	public Vendedor(Vendedor dados) {
 		this.nome = dados.getNome();
 		this.email = dados.getEmail();
 		this.cpfVendedor = dados.getCpfVendedor();

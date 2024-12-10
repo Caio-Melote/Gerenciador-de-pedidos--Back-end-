@@ -21,7 +21,7 @@ public class Cliente {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long idCliente;
+	private Long idCliente;
 	private String nome;
 	private String email;
 	private String cpfCliente;
@@ -30,6 +30,15 @@ public class Cliente {
 	private boolean ativo;
 
 	public Cliente(ClienteDadosCadastro dados) {
+		this.nome = dados.getNome();
+		this.email = dados.getEmail();
+		this.cpfCliente = dados.getCpfCliente();
+		this.telefone = dados.getTelefone();
+		this.endereco = dados.getEndereco();
+		this.ativo = true;
+	}
+	
+	public Cliente(Cliente dados) {
 		this.nome = dados.getNome();
 		this.email = dados.getEmail();
 		this.cpfCliente = dados.getCpfCliente();
