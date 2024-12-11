@@ -29,5 +29,5 @@ public class PedidoDadosAtualizacao {
 	private String status;
 	
 	@NotNull
-	private boolean ativo;
+	private Boolean ativo;
 }

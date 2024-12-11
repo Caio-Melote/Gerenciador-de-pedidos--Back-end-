@@ -1,11 +1,12 @@
 package br.com.treinamento.appGerenciador.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import br.com.treinamento.appGerenciador.model.Vendedor;
 
 public interface VendedorRepository extends JpaRepository<Vendedor, Long>{
@@ -19,4 +20,6 @@ public interface VendedorRepository extends JpaRepository<Vendedor, Long>{
 	            @Param("email") String email,
 	            @Param("cpfVendedor") String cpfVendedor,
 	            Pageable pageable);
+	 
+	 Optional<Vendedor> findByIdVendedorAndAtivoTrue(Long id);
 }

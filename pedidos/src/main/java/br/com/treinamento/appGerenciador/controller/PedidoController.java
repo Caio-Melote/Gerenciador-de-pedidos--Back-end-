@@ -65,9 +65,9 @@ public class PedidoController {
 	@Transactional
 	public ResponseEntity cadastrar(@RequestBody @Valid PedidoDadosCadastro dados, UriComponentsBuilder uriBuilder) {
 	
-		Cliente clienteExistente = clienteRepository.findById(dados.getIdCliente()).orElseThrow(() -> new IllegalArgumentException("Cliente com ID = " + dados.getIdCliente() + " não encontrado!!"));
+		Cliente clienteExistente = clienteRepository.findByIdClienteAndAtivoTrue(dados.getIdCliente()).orElseThrow(() -> new IllegalArgumentException("Cliente com ID = " + dados.getIdCliente() + " não encontrado!!"));
 		
-		Vendedor vendedorExistente = vendedorRepository.findById(dados.getIdVendedor()).orElseThrow(() -> new IllegalArgumentException("Vendedor com ID = " + dados.getIdVendedor() + " não encontrado!!"));	
+		Vendedor vendedorExistente = vendedorRepository.findByIdVendedorAndAtivoTrue(dados.getIdVendedor()).orElseThrow(() -> new IllegalArgumentException("Vendedor com ID = " + dados.getIdVendedor() + " não encontrado!!"));	
 		
 		var pedido = new Pedido(dados); 
 		pedido.setCliente(clienteExistente);
@@ -85,9 +85,9 @@ public class PedidoController {
 
 		var pedidoOptional = pedidoRepository.findById(id);
 		
-		Cliente clienteExistente = clienteRepository.findById(dados.getIdCliente()).orElseThrow(() -> new IllegalArgumentException("Cliente com ID = " + dados.getIdCliente() + " não encontrado!!"));
+		Cliente clienteExistente = clienteRepository.findByIdClienteAndAtivoTrue(dados.getIdCliente()).orElseThrow(() -> new IllegalArgumentException("Cliente com ID = " + dados.getIdCliente() + " não encontrado!!"));
 		
-		Vendedor vendedorExistente = vendedorRepository.findById(dados.getIdVendedor()).orElseThrow(() -> new IllegalArgumentException("Vendedor com ID = " + dados.getIdVendedor() + " não encontrado!!"));	
+		Vendedor vendedorExistente = vendedorRepository.findByIdVendedorAndAtivoTrue(dados.getIdVendedor()).orElseThrow(() -> new IllegalArgumentException("Vendedor com ID = " + dados.getIdVendedor() + " não encontrado!!"));	
 
 
 		if (pedidoOptional.get().getAtivo()) {

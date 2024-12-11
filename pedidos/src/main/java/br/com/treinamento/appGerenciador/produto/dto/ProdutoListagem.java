@@ -1,5 +1,7 @@
 package br.com.treinamento.appGerenciador.produto.dto;
 
+import java.math.BigDecimal;
+
 import br.com.treinamento.appGerenciador.model.Produto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +15,7 @@ public class ProdutoListagem {
 	private Long idProduto;
     private String nome;
     private String descricao;
-    private Double preco;  
+    private BigDecimal preco;  
     private String categoria; 
     private Integer codigoBarras; 
 

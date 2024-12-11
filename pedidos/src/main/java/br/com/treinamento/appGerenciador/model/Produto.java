@@ -1,5 +1,7 @@
 package br.com.treinamento.appGerenciador.model;
 
+import java.math.BigDecimal;
+
 import br.com.treinamento.appGerenciador.produto.dto.ProdutoDadosAtualizacao;
 import br.com.treinamento.appGerenciador.produto.dto.ProdutoDadosCadastro;
 import jakarta.persistence.Entity;
@@ -24,7 +26,7 @@ public class Produto {
     private Long idProduto;  
     private String nome;
     private String descricao;
-    private Double preco;  
+    private BigDecimal preco;  
     private String categoria;  
     private Integer codigoBarras;   
     private Boolean ativo; 
@@ -52,7 +54,7 @@ public class Produto {
 			this.descricao = dados.getDescricao();
 		}
 		
-		if (dados.getPreco() > 0) {
+		if (dados.getPreco() != null) {
 			this.preco = dados.getPreco();
 		}
 		

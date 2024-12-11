@@ -56,14 +56,6 @@ public class Pedido {
 
 	public void atualizarInformacoes(@Valid PedidoDadosAtualizacao dados) {
 
-//		if (dados.getIdCliente() != null) {
-//			this.cliente = dados.getIdCliente();
-//		}
-//
-//		if (dados.getIdVendedor() != null) {
-//			this.vendedor = dados.getIdVendedor();	
-//		}
-
 		if (dados.getData() != null) {
 			this.data = dados.getData();
 		}
@@ -76,8 +68,8 @@ public class Pedido {
 			this.status = dados.getStatus();
 		}
 
-		if (dados.isAtivo()) {
-			this.ativo = dados.isAtivo();
+		if (dados.getAtivo()) {
+			this.ativo = dados.getAtivo();
 		}
 		
 	}

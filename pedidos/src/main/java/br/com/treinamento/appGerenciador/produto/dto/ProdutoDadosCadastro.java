@@ -1,5 +1,7 @@
 package br.com.treinamento.appGerenciador.produto.dto;
 
+import java.math.BigDecimal;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -21,7 +23,7 @@ public class ProdutoDadosCadastro {
     private String descricao;
     
     @NotNull
-    private Double preco;   
+    private BigDecimal preco;   
     
     @NotBlank
     private String categoria;  
