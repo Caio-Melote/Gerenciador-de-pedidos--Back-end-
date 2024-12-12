@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import jakarta.persistence.EntityNotFoundException;
 
 @RestControllerAdvice
-public class TratarErros {
+public class ExceptionResolver {
 
 	@SuppressWarnings("rawtypes")
 	@ExceptionHandler(EntityNotFoundException.class)

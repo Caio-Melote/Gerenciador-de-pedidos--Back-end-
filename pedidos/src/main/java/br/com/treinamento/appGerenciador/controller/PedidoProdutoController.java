@@ -18,17 +18,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import br.com.treinamento.appGerenciador.model.Pedido;
 import br.com.treinamento.appGerenciador.model.PedidoProduto;
 import br.com.treinamento.appGerenciador.model.Produto;
-import br.com.treinamento.appGerenciador.model.Pedido;
 import br.com.treinamento.appGerenciador.pedidoProduto.dto.PedidoProdutoDadosAtualizacao;
 import br.com.treinamento.appGerenciador.pedidoProduto.dto.PedidoProdutoDadosCadastro;
 import br.com.treinamento.appGerenciador.pedidoProduto.dto.PedidoProdutoListagem;
 import br.com.treinamento.appGerenciador.pedidoProduto.dto.PedidoProdutoRespostaPaginada;
 import br.com.treinamento.appGerenciador.pedidoProduto.dto.PedidoProdutoSemPaginacao;
 import br.com.treinamento.appGerenciador.repository.PedidoProdutoRepository;
-import br.com.treinamento.appGerenciador.repository.PedidoRepository;
-import br.com.treinamento.appGerenciador.repository.ProdutoRepository;
+import br.com.treinamento.appGerenciador.service.PedidoProdutoService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -38,12 +38,9 @@ public class PedidoProdutoController {
 
 	@Autowired
 	private PedidoProdutoRepository pedidoProdutoRepository;
-
-	@Autowired
-	private PedidoRepository pedidoRepository;
-
-	@Autowired
-	private ProdutoRepository produtoRepository;
+	
+	 @Autowired
+	 private PedidoProdutoService pedidoProdutoService;
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping
@@ -68,23 +65,14 @@ public class PedidoProdutoController {
 	@Transactional
 	public ResponseEntity cadastrar(@RequestBody @Valid PedidoProdutoDadosCadastro dados, UriComponentsBuilder uriBuilder) {
 
-		Pedido pedidoExistente = pedidoRepository.findByIdPedidoAndAtivoTrue(dados.getIdPedido()).get();
-		if (pedidoExistente == null) {
-			throw new IllegalArgumentException("Pedido com ID = " + dados.getIdPedido() + " não encontrado!!");
-		}
+		Pedido pedido = pedidoProdutoService.validarPedidoAtivo(dados.getIdPedido());
+        Produto produto = pedidoProdutoService.validarProdutoAtivo(dados.getIdProduto());
 
-		Produto produtoExistente = produtoRepository.findByIdProdutoAndAtivoTrue(dados.getIdProduto()).get();
-		if (produtoExistente == null) {
-			throw new IllegalArgumentException("Produto com ID = " + dados.getIdProduto() + " não encontrado!!");
-		}
+        PedidoProduto pedidoProduto = new PedidoProduto(pedido, produto, dados.getQuantidade(), dados.getDesconto());
+        pedidoProdutoService.salvarPedidoProduto(pedidoProduto);
 
-		PedidoProduto pedidoProduto = new PedidoProduto(pedidoExistente, produtoExistente, dados.getQuantidade(), dados.getDesconto());
-		pedidoProduto.setPedido(pedidoExistente);
-		pedidoProduto.setProduto(produtoExistente);
-		pedidoProdutoRepository.save(pedidoProduto);
-
-		var uri = uriBuilder.path("/pedidoproduto/{id}").buildAndExpand(pedidoProduto.getIdPedidoProduto()).toUri();
-		return ResponseEntity.created(uri).body(new PedidoProdutoSemPaginacao(pedidoProduto));
+        var uri = uriBuilder.path("/pedidoproduto/{id}").buildAndExpand(pedidoProduto.getIdPedidoProduto()).toUri();
+        return ResponseEntity.created(uri).body(new PedidoProdutoSemPaginacao(pedidoProduto));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -94,32 +82,20 @@ public class PedidoProdutoController {
 
 		var pedidoProdutoOptional = pedidoProdutoRepository.findById(id);
 		
-		if (pedidoProdutoOptional.get().getAtivo()) {
-		
-		Pedido pedidoExistente = pedidoRepository.findByIdPedidoAndAtivoTrue(dados.getIdPedido()).get();
-		if (pedidoExistente == null) {
-			throw new IllegalArgumentException("Pedido com ID = " + dados.getIdPedido() + " não encontrado!!");
-		}
+		if (pedidoProdutoOptional.isPresent() && pedidoProdutoOptional.get().getAtivo()) {
+            Pedido pedidoExistente = pedidoProdutoService.validarPedidoAtivo(dados.getIdPedido());
+            Produto produtoExistente = pedidoProdutoService.validarProdutoAtivo(dados.getIdProduto());
 
-		Produto produtoExistente = produtoRepository.findByIdProdutoAndAtivoTrue(dados.getIdProduto()).get();
-		if (produtoExistente == null) {
-			throw new IllegalArgumentException("Produto com ID = " + dados.getIdProduto() + " não encontrado!!");
-		}
+            PedidoProduto pedidoProduto = pedidoProdutoOptional.get();
+            pedidoProduto.atualizarInformacoes(pedidoExistente, produtoExistente, dados.getQuantidade(), dados.getPrecoUnitario(), dados.getDesconto());
 
-			var pedidoProduto = pedidoProdutoOptional.get();
-			pedidoProduto.atualizarInformacoes(pedidoExistente, produtoExistente, dados.getQuantidade(), dados.getPrecoUnitario(), dados.getDesconto());
+            pedidoProdutoService.salvarPedidoProduto(pedidoProduto);
 
-			pedidoProdutoRepository.save(pedidoProduto);
+            var resposta = new PedidoProdutoSemPaginacao(pedidoProduto);
+            return ResponseEntity.ok(resposta);
+        }
 
-			var resposta = new PedidoProdutoSemPaginacao(pedidoProduto);
-
-			return ResponseEntity.ok(resposta);
-
-		} else {
-
-			return ResponseEntity.notFound().build();
-		}
-
+        return ResponseEntity.notFound().build();
 	}
 
 	@SuppressWarnings("rawtypes")

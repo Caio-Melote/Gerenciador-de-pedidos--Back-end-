@@ -2,6 +2,7 @@ package br.com.treinamento.appGerenciador.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import br.com.treinamento.appGerenciador.model.Cliente;
 import br.com.treinamento.appGerenciador.model.Pedido;
 import br.com.treinamento.appGerenciador.model.Vendedor;
@@ -26,9 +28,8 @@ import br.com.treinamento.appGerenciador.pedido.dto.PedidoDadosCadastro;
 import br.com.treinamento.appGerenciador.pedido.dto.PedidoListagem;
 import br.com.treinamento.appGerenciador.pedido.dto.PedidoRespostaPaginada;
 import br.com.treinamento.appGerenciador.pedido.dto.PedidoSemPaginacao;
-import br.com.treinamento.appGerenciador.repository.ClienteRepository;
 import br.com.treinamento.appGerenciador.repository.PedidoRepository;
-import br.com.treinamento.appGerenciador.repository.VendedorRepository;
+import br.com.treinamento.appGerenciador.service.PedidoService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -40,10 +41,7 @@ public class PedidoController {
 	private PedidoRepository pedidoRepository;
 
 	@Autowired
-	private ClienteRepository clienteRepository;
-
-	@Autowired
-	private VendedorRepository vendedorRepository;
+	 private PedidoService pedidoService;
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping
@@ -64,18 +62,15 @@ public class PedidoController {
 	@PostMapping
 	@Transactional
 	public ResponseEntity cadastrar(@RequestBody @Valid PedidoDadosCadastro dados, UriComponentsBuilder uriBuilder) {
-	
-		Cliente clienteExistente = clienteRepository.findByIdClienteAndAtivoTrue(dados.getIdCliente()).orElseThrow(() -> new IllegalArgumentException("Cliente com ID = " + dados.getIdCliente() + " não encontrado!!"));
 		
-		Vendedor vendedorExistente = vendedorRepository.findByIdVendedorAndAtivoTrue(dados.getIdVendedor()).orElseThrow(() -> new IllegalArgumentException("Vendedor com ID = " + dados.getIdVendedor() + " não encontrado!!"));	
-		
-		var pedido = new Pedido(dados); 
-		pedido.setCliente(clienteExistente);
-		pedido.setVendedor(vendedorExistente); 
-		pedidoRepository.save(pedido); 
-		
-		var uri = uriBuilder.path("/pedido/{id}").buildAndExpand(pedido.getIdPedido()).toUri(); 
-		return ResponseEntity.created(uri).body(new PedidoSemPaginacao(pedido));
+		Cliente cliente = pedidoService.validarClienteAtivo(dados.getIdCliente());
+		Vendedor vendedor = pedidoService.validarVendedorAtivo(dados.getIdVendedor());
+
+        Pedido pedido = new Pedido(cliente, vendedor, dados.getData(), dados.getValorTotal(), dados.getStatus());
+        pedidoService.salvarPedido(pedido);
+
+        var uri = uriBuilder.path("/pedidoproduto/{id}").buildAndExpand(pedido.getIdPedido()).toUri();
+        return ResponseEntity.created(uri).body(new PedidoSemPaginacao(pedido));
 }
 
 	@SuppressWarnings("rawtypes")
@@ -83,30 +78,25 @@ public class PedidoController {
 	@Transactional
 	public ResponseEntity atualizar(@PathVariable Long id, @RequestBody @Valid PedidoDadosAtualizacao dados) {
 
-		var pedidoOptional = pedidoRepository.findById(id);
+var pedidoOptional = pedidoRepository.findById(id);
 		
-		Cliente clienteExistente = clienteRepository.findByIdClienteAndAtivoTrue(dados.getIdCliente()).orElseThrow(() -> new IllegalArgumentException("Cliente com ID = " + dados.getIdCliente() + " não encontrado!!"));
-		
-		Vendedor vendedorExistente = vendedorRepository.findByIdVendedorAndAtivoTrue(dados.getIdVendedor()).orElseThrow(() -> new IllegalArgumentException("Vendedor com ID = " + dados.getIdVendedor() + " não encontrado!!"));	
+		if (pedidoOptional.isPresent() && pedidoOptional.get().getAtivo()) {
+			
+			Cliente cliente = pedidoService.validarClienteAtivo(dados.getIdCliente());
+			
+			var vendedor = pedidoService.validarVendedorAtivo(dados.getIdVendedor());
 
 
-		if (pedidoOptional.get().getAtivo()) {
+            Pedido pedido = pedidoOptional.get();
+            pedido.atualizarInformacoes(cliente, vendedor, dados.getData(), dados.getValorTotal(), dados.getStatus());
 
-			var pedido = pedidoOptional.get();
-			pedido.atualizarInformacoes(dados);
-			pedido.setCliente(clienteExistente);
-			pedido.setVendedor(vendedorExistente); 
+            pedidoService.salvarPedido(pedido);
 
-			pedidoRepository.save(pedido);
+            var resposta = new PedidoSemPaginacao(pedido);
+            return ResponseEntity.ok(resposta);
+        }
 
-			var resposta = new PedidoSemPaginacao(pedido);
-
-			return ResponseEntity.ok(resposta);
-
-		} else {
-
-			return ResponseEntity.notFound().build();
-		}
+        return ResponseEntity.notFound().build();
 
 	}
 

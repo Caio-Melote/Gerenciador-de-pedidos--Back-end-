@@ -2,9 +2,6 @@ package br.com.treinamento.appGerenciador.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import br.com.treinamento.appGerenciador.pedido.dto.PedidoDadosAtualizacao;
-import br.com.treinamento.appGerenciador.pedido.dto.PedidoDadosCadastro;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,7 +9,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,13 +36,13 @@ public class Pedido {
     private String status;   
     private Boolean ativo; 
     
-    public Pedido(PedidoDadosCadastro dados) {
+    public Pedido(Cliente cliente, Vendedor vendedor, LocalDate data, BigDecimal valorTotal, String status) {
     	
-    	this.cliente = null;
-        this.vendedor = null;
-        this.data = dados.getData();
-        this.valorTotal = dados.getValorTotal();
-        this.status = dados.getStatus();
+    	this.cliente = cliente;
+        this.vendedor = vendedor;
+        this.data = data;
+        this.valorTotal = valorTotal;
+        this.status = status;
         this.ativo = true;
     	}
     
@@ -54,22 +50,27 @@ public class Pedido {
 		this.ativo = false;
 	}
 
-	public void atualizarInformacoes(@Valid PedidoDadosAtualizacao dados) {
-
-		if (dados.getData() != null) {
-			this.data = dados.getData();
-		}
+	public void atualizarInformacoes(Cliente cliente, Vendedor vendedor, LocalDate data, BigDecimal valorTotal, String status) {
 		
-		if (dados.getValorTotal() != null) {
-			this.valorTotal = dados.getValorTotal();
-		}
 		
-		if (dados.getStatus() != null) {
-			this.status = dados.getStatus();
+		if (cliente != null) {
+			this.cliente = cliente;
 		}
 
-		if (dados.getAtivo()) {
-			this.ativo = dados.getAtivo();
+		if (vendedor != null) {
+			this.vendedor = vendedor;
+		}
+		
+		if (data != null) {
+			this.data = data;
+		}
+		
+		if (valorTotal != null) {
+			this.valorTotal = valorTotal;
+		}
+		
+		if (status != null) {
+			this.status = status;
 		}
 		
 	}
