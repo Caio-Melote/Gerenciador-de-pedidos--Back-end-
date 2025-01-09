@@ -13,13 +13,13 @@ public class VendedorListagem {
 	private Long idVendedor;
     private String nome;
     private String email; 
-    private String cpf_vendedor; 
+    private String cpfVendedor; 
 
     public VendedorListagem(Vendedor vendedor) {
         this.idVendedor = vendedor.getIdVendedor(); 
         this.nome = vendedor.getNome();    
         this.email = vendedor.getEmail(); 
-        this.cpf_vendedor = vendedor.getCpfVendedor();   
+        this.cpfVendedor = vendedor.getCpfVendedor();   
     }
 }
 

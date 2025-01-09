@@ -38,9 +38,9 @@ public class VendedorController {
 	public ResponseEntity listar(@PageableDefault(size = 20) Pageable paginacao,
 			@RequestParam(required = false) String nome, 
 			@RequestParam(required = false) String email,
-			@RequestParam(required = false) String cpf_vendedor) {
+			@RequestParam(required = false) String cpfVendedor) {
 
-		var page = vendedorRepository.findAllByFilters(nome, email, cpf_vendedor, paginacao).map(VendedorListagem::new);
+		var page = vendedorRepository.findAllByFilters(nome, email, cpfVendedor, paginacao).map(VendedorListagem::new);
 
 		VendedorRespostaPaginada<VendedorListagem> response = new VendedorRespostaPaginada<>(page);
 		return ResponseEntity.ok(response);
