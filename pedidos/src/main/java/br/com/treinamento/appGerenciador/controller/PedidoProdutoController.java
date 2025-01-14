@@ -1,6 +1,7 @@
 package br.com.treinamento.appGerenciador.controller;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +29,7 @@ import br.com.treinamento.appGerenciador.pedidoProduto.dto.PedidoProdutoListagem
 import br.com.treinamento.appGerenciador.pedidoProduto.dto.PedidoProdutoRespostaPaginada;
 import br.com.treinamento.appGerenciador.pedidoProduto.dto.PedidoProdutoSemPaginacao;
 import br.com.treinamento.appGerenciador.repository.PedidoProdutoRepository;
+import br.com.treinamento.appGerenciador.repository.PedidoRepository;
 import br.com.treinamento.appGerenciador.service.PedidoProdutoService;
 import jakarta.validation.Valid;
 
@@ -35,25 +37,24 @@ import jakarta.validation.Valid;
 @CrossOrigin("*")
 @RequestMapping("/pedidoproduto")
 public class PedidoProdutoController {
-
+	
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	
 	@Autowired
 	private PedidoProdutoRepository pedidoProdutoRepository;
-	
-	 @Autowired
-	 private PedidoProdutoService pedidoProdutoService;
+
+	@Autowired
+	private PedidoProdutoService pedidoProdutoService;
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping
 	public ResponseEntity listar(@PageableDefault(size = 20) Pageable paginacao,
-			@RequestParam(required = false) Long pedido, 
-			@RequestParam(required = false) Long produto,
-			@RequestParam(required = false) Integer quantidade, 
-			@RequestParam(required = false) BigDecimal precoMin,
-			@RequestParam(required = false) BigDecimal precoMax, 
-			@RequestParam(required = false) BigDecimal desconto) {
+			@RequestParam(required = false) Long pedido, @RequestParam(required = false) Long produto,
+			@RequestParam(required = false) Integer quantidade, @RequestParam(required = false) BigDecimal precoMin,
+			@RequestParam(required = false) BigDecimal precoMax) {
 
-		var page = pedidoProdutoRepository
-				.findAllByFilters(pedido, produto, quantidade, precoMin, precoMax, desconto, paginacao)
+		var page = pedidoProdutoRepository.findAllByFilters(pedido, produto, quantidade, precoMin, precoMax, paginacao)
 				.map(PedidoProdutoListagem::new);
 
 		PedidoProdutoRespostaPaginada<PedidoProdutoListagem> response = new PedidoProdutoRespostaPaginada<>(page);
@@ -63,16 +64,20 @@ public class PedidoProdutoController {
 	@SuppressWarnings("rawtypes")
 	@PostMapping
 	@Transactional
-	public ResponseEntity cadastrar(@RequestBody @Valid PedidoProdutoDadosCadastro dados, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity cadastrar(@RequestBody @Valid PedidoProdutoDadosCadastro dados,
+			UriComponentsBuilder uriBuilder) {
 
 		Pedido pedido = pedidoProdutoService.validarPedidoAtivo(dados.getIdPedido());
-        Produto produto = pedidoProdutoService.validarProdutoAtivo(dados.getIdProduto());
+		Produto produto = pedidoProdutoService.validarProdutoAtivo(dados.getIdProduto());
 
-        PedidoProduto pedidoProduto = new PedidoProduto(pedido, produto, dados.getQuantidade(), dados.getDesconto());
-        pedidoProdutoService.salvarPedidoProduto(pedidoProduto);
+		PedidoProduto pedidoProduto = new PedidoProduto(pedido, produto, dados.getQuantidade());
+		pedidoProdutoService.salvarPedidoProduto(pedidoProduto);
 
-        var uri = uriBuilder.path("/pedidoproduto/{id}").buildAndExpand(pedidoProduto.getIdPedidoProduto()).toUri();
-        return ResponseEntity.created(uri).body(new PedidoProdutoSemPaginacao(pedidoProduto));
+		atualizarValorTotalPedido(pedido);
+		pedidoRepository.save(pedido);
+
+		var uri = uriBuilder.path("/pedidoproduto/{id}").buildAndExpand(pedidoProduto.getIdPedidoProduto()).toUri();
+		return ResponseEntity.created(uri).body(new PedidoProdutoSemPaginacao(pedidoProduto));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -81,21 +86,24 @@ public class PedidoProdutoController {
 	public ResponseEntity atualizar(@PathVariable Long id, @RequestBody @Valid PedidoProdutoDadosAtualizacao dados) {
 
 		var pedidoProdutoOptional = pedidoProdutoRepository.findById(id);
-		
+
 		if (pedidoProdutoOptional.isPresent() && pedidoProdutoOptional.get().getAtivo()) {
-            Pedido pedidoExistente = pedidoProdutoService.validarPedidoAtivo(dados.getIdPedido());
-            Produto produtoExistente = pedidoProdutoService.validarProdutoAtivo(dados.getIdProduto());
+			Pedido pedidoExistente = pedidoProdutoService.validarPedidoAtivo(dados.getIdPedido());
+			Produto produtoExistente = pedidoProdutoService.validarProdutoAtivo(dados.getIdProduto());
 
-            PedidoProduto pedidoProduto = pedidoProdutoOptional.get();
-            pedidoProduto.atualizarInformacoes(pedidoExistente, produtoExistente, dados.getQuantidade(), dados.getPrecoUnitario(), dados.getDesconto());
+			PedidoProduto pedidoProduto = pedidoProdutoOptional.get();
+			pedidoProduto.atualizarInformacoes(pedidoExistente, produtoExistente, dados.getQuantidade(),
+					dados.getPrecoUnitario());
 
-            pedidoProdutoService.salvarPedidoProduto(pedidoProduto);
+			pedidoProdutoService.salvarPedidoProduto(pedidoProduto);
 
-            var resposta = new PedidoProdutoSemPaginacao(pedidoProduto);
-            return ResponseEntity.ok(resposta);
-        }
+			//pedidoProdutoService.atualizarValorTotal(pedidoExistente);
 
-        return ResponseEntity.notFound().build();
+			var resposta = new PedidoProdutoSemPaginacao(pedidoProduto);
+			return ResponseEntity.ok(resposta);
+		}
+
+		return ResponseEntity.notFound().build();
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -107,30 +115,35 @@ public class PedidoProdutoController {
 		pedidoProduto.getAtivo();
 
 		if (pedidoProduto.getAtivo()) {
+
 			pedidoProduto.excluir();
+			Pedido pedido = pedidoProduto.getPedido(); 
+			atualizarValorTotalPedido(pedido); 
+			pedidoRepository.save(pedido);
+			pedidoProdutoRepository.save(pedidoProduto);
+
 		} else {
 			return ResponseEntity.notFound().build();
 		}
 
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@PutMapping("/{id}/reativar")
 	public ResponseEntity reativa(@PathVariable Long id) {
-	    PedidoProduto pedidoProduto = pedidoProdutoRepository.findById(id).get();
-	    if (pedidoProduto == null) {
-	        return ResponseEntity.notFound().build();
-	    }
-	    if (pedidoProduto.getAtivo()){
-	    	return ResponseEntity.ok("Já está ativo!");
-	    }
-	    
-	    pedidoProduto.setAtivo(true);
-	    pedidoProdutoRepository.save(pedidoProduto);
-	    return ResponseEntity.ok(pedidoProduto);
-	}
+		PedidoProduto pedidoProduto = pedidoProdutoRepository.findById(id).get();
+		if (pedidoProduto == null) {
+			return ResponseEntity.notFound().build();
+		}
+		if (pedidoProduto.getAtivo()) {
+			return ResponseEntity.ok("Já está ativo!");
+		}
 
+		pedidoProduto.setAtivo(true);
+		pedidoProdutoRepository.save(pedidoProduto);
+		return ResponseEntity.ok(pedidoProduto);
+	}
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/{id}")
@@ -144,5 +157,17 @@ public class PedidoProdutoController {
 		} else {
 			return ResponseEntity.notFound().build();
 		}
+	}
+	
+	private void atualizarValorTotalPedido(Pedido pedido) {
+	    BigDecimal valorTotal = BigDecimal.ZERO;
+
+	    List<PedidoProduto> produtosAtivos = pedidoProdutoRepository.findByPedidoAndAtivoTrue(pedido);
+
+	    for (PedidoProduto pp : produtosAtivos) {
+	        BigDecimal valorProduto = pp.getPrecoUnitario().multiply(new BigDecimal(pp.getQuantidade()));
+	        valorTotal = valorTotal.add(valorProduto);
+	    }
+	    pedido.setValorTotal(valorTotal);
 	}
 }

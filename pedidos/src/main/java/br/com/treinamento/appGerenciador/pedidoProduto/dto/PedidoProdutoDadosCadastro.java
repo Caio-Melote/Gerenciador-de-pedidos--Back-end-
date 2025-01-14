@@ -1,6 +1,5 @@
 package br.com.treinamento.appGerenciador.pedidoProduto.dto;
 
-import java.math.BigDecimal;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
@@ -15,9 +14,6 @@ public class PedidoProdutoDadosCadastro {
 
 	@NotNull
 	private Integer quantidade;
-	
-	@NotNull
-	private BigDecimal desconto;
 	
 	@NotNull
 	private boolean ativo;

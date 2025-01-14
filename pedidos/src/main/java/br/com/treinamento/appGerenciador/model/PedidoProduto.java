@@ -32,16 +32,14 @@ public class PedidoProduto {
 	private Produto produto;
 	private Integer quantidade;
 	private BigDecimal precoUnitario;
-	private BigDecimal desconto;
 	private Boolean ativo;
 
-	public PedidoProduto(Pedido pedido, Produto produto, Integer quantidade, BigDecimal desconto) {
+	public PedidoProduto(Pedido pedido, Produto produto, Integer quantidade) {
 
 		this.pedido = pedido;
 		this.produto = produto;
 		this.quantidade = quantidade;
 		this.precoUnitario = produto.getPreco();
-		this.desconto = desconto;
 		this.ativo = true;
 	}
 
@@ -49,7 +47,7 @@ public class PedidoProduto {
 		this.ativo = false;
 	}
 
-	public void atualizarInformacoes( Pedido pedido,  Produto produto,  Integer quantidade,  BigDecimal precoUnitario,  BigDecimal desconto) {
+	public void atualizarInformacoes( Pedido pedido,  Produto produto,  Integer quantidade,  BigDecimal precoUnitario) {
 
 		if (pedido != null) {
 			this.pedido = pedido;
@@ -65,10 +63,6 @@ public class PedidoProduto {
 
 		if (precoUnitario != null) {
 			this.precoUnitario = precoUnitario;
-		}
-
-		if (desconto != null) {
-			this.desconto = desconto;
 		}
 
 	}

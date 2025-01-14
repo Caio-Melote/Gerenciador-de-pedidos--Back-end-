@@ -41,14 +41,17 @@ public class PedidoController {
 	private PedidoRepository pedidoRepository;
 
 	@Autowired
-	 private PedidoService pedidoService;
+	private PedidoService pedidoService;
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping
 	public ResponseEntity listar(@PageableDefault(size = 20) Pageable paginacao,
-			@RequestParam(required = false) String cliente, @RequestParam(required = false) String vendedor,
-			@RequestParam(required = false) LocalDate dataStart, @RequestParam(required = false) LocalDate dataEnd,
-			@RequestParam(required = false) BigDecimal valorTotal, @RequestParam(required = false) String status) {
+			@RequestParam(required = false) String cliente, 
+			@RequestParam(required = false) String vendedor,
+			@RequestParam(required = false) LocalDate dataStart, 
+			@RequestParam(required = false) LocalDate dataEnd,
+			@RequestParam(required = false) BigDecimal valorTotal, 
+			@RequestParam(required = false) String status) {
 
 		var page = pedidoRepository
 				.findAllByFilters(cliente, vendedor, dataStart, dataEnd, valorTotal, status, paginacao)
@@ -62,41 +65,40 @@ public class PedidoController {
 	@PostMapping
 	@Transactional
 	public ResponseEntity cadastrar(@RequestBody @Valid PedidoDadosCadastro dados, UriComponentsBuilder uriBuilder) {
-		
+
 		Cliente cliente = pedidoService.validarClienteAtivo(dados.getIdCliente());
 		Vendedor vendedor = pedidoService.validarVendedorAtivo(dados.getIdVendedor());
 
-        Pedido pedido = new Pedido(cliente, vendedor, dados.getData(), dados.getValorTotal(), dados.getStatus());
-        pedidoService.salvarPedido(pedido);
+		Pedido pedido = new Pedido(cliente, vendedor, dados.getData(), dados.getValorTotal(), dados.getStatus());
+		pedidoService.salvarPedido(pedido);
 
-        var uri = uriBuilder.path("/pedidoproduto/{id}").buildAndExpand(pedido.getIdPedido()).toUri();
-        return ResponseEntity.created(uri).body(new PedidoSemPaginacao(pedido));
-}
+		var uri = uriBuilder.path("/pedidoproduto/{id}").buildAndExpand(pedido.getIdPedido()).toUri();
+		return ResponseEntity.created(uri).body(new PedidoSemPaginacao(pedido));
+	}
 
 	@SuppressWarnings("rawtypes")
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity atualizar(@PathVariable Long id, @RequestBody @Valid PedidoDadosAtualizacao dados) {
 
-var pedidoOptional = pedidoRepository.findById(id);
-		
+		var pedidoOptional = pedidoRepository.findById(id);
+
 		if (pedidoOptional.isPresent() && pedidoOptional.get().getAtivo()) {
-			
+
 			Cliente cliente = pedidoService.validarClienteAtivo(dados.getIdCliente());
-			
+
 			var vendedor = pedidoService.validarVendedorAtivo(dados.getIdVendedor());
 
+			Pedido pedido = pedidoOptional.get();
+			pedido.atualizarInformacoes(cliente, vendedor, dados.getData(), dados.getValorTotal(), dados.getStatus());
 
-            Pedido pedido = pedidoOptional.get();
-            pedido.atualizarInformacoes(cliente, vendedor, dados.getData(), dados.getValorTotal(), dados.getStatus());
+			pedidoService.salvarPedido(pedido);
 
-            pedidoService.salvarPedido(pedido);
+			var resposta = new PedidoSemPaginacao(pedido);
+			return ResponseEntity.ok(resposta);
+		}
 
-            var resposta = new PedidoSemPaginacao(pedido);
-            return ResponseEntity.ok(resposta);
-        }
-
-        return ResponseEntity.notFound().build();
+		return ResponseEntity.notFound().build();
 
 	}
 
@@ -116,23 +118,22 @@ var pedidoOptional = pedidoRepository.findById(id);
 
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	@PutMapping("/{id}/reativar")
 	public ResponseEntity reativa(@PathVariable Long id) {
-	    Pedido pedido = pedidoRepository.findById(id).get();
-	    if (pedido == null) {
-	        return ResponseEntity.notFound().build();
-	    }
-	    if (pedido.getAtivo()){
-	    	return ResponseEntity.ok("Já está ativo!");
-	    }
-	    
-	    pedido.setAtivo(true);
-	    pedidoRepository.save(pedido);
-	    return ResponseEntity.ok(pedido);
-	}
+		Pedido pedido = pedidoRepository.findById(id).get();
+		if (pedido == null) {
+			return ResponseEntity.notFound().build();
+		}
+		if (pedido.getAtivo()) {
+			return ResponseEntity.ok("Já está ativo!");
+		}
 
+		pedido.setAtivo(true);
+		pedidoRepository.save(pedido);
+		return ResponseEntity.ok(pedido);
+	}
 
 	@SuppressWarnings("rawtypes")
 	@GetMapping("/{id}")

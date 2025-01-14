@@ -36,12 +36,13 @@ public class Pedido {
     private String status;   
     private Boolean ativo; 
     
-    public Pedido(Cliente cliente, Vendedor vendedor, LocalDate data, BigDecimal valorTotal, String status) {
+    @SuppressWarnings("static-access")
+	public Pedido(Cliente cliente, Vendedor vendedor, LocalDate data, BigDecimal valorTotal, String status) {
     	
     	this.cliente = cliente;
         this.vendedor = vendedor;
         this.data = data;
-        this.valorTotal = valorTotal;
+        this.valorTotal = this.valorTotal.ZERO;
         this.status = status;
         this.ativo = true;
     	}

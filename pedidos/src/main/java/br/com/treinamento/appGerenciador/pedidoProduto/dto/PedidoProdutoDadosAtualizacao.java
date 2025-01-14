@@ -19,7 +19,4 @@ public class PedidoProdutoDadosAtualizacao {
 	
 	
 	private BigDecimal precoUnitario;
-	
-
-	private BigDecimal desconto;
 }

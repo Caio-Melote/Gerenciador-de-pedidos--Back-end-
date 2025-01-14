@@ -19,7 +19,6 @@ public class PedidoProdutoListagem {
 	private Produto produto;
 	private Integer quantidade;
 	private BigDecimal precoUnitario;
-	private BigDecimal desconto;
 	private Boolean ativo;
 	
 	public PedidoProdutoListagem(PedidoProduto pedidoProduto) {
@@ -28,6 +27,5 @@ public class PedidoProdutoListagem {
         this.produto = pedidoProduto.getProduto();
         this.quantidade = pedidoProduto.getQuantidade();
         this.precoUnitario = pedidoProduto.getPrecoUnitario();
-        this.desconto = pedidoProduto.getDesconto();
     }
 }

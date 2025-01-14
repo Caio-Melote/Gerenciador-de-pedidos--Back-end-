@@ -22,12 +22,10 @@ public class PedidoDadosAtualizacao {
 	@NotNull
 	private LocalDate data;
 
-	@NotNull
 	private BigDecimal valorTotal;
 	
 	@NotBlank
 	private String status;
 	
-	@NotNull
 	private Boolean ativo;
 }

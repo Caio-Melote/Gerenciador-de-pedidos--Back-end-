@@ -18,7 +18,6 @@ public class PedidoDadosCadastro {
 	@NotNull
 	private LocalDate data;
 
-	@NotNull
 	private BigDecimal valorTotal;
 	
 	@NotBlank
