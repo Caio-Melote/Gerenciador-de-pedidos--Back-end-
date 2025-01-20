@@ -14,12 +14,20 @@ public class VendedorListagem {
     private String nome;
     private String email; 
     private String cpfVendedor; 
+    private String identificadorVend;
+    private Long prefixoCepVend;
+    private String cidadeVend;
+    private String estadoVend;
 
     public VendedorListagem(Vendedor vendedor) {
         this.idVendedor = vendedor.getIdVendedor(); 
         this.nome = vendedor.getNome();    
         this.email = vendedor.getEmail(); 
         this.cpfVendedor = vendedor.getCpfVendedor();   
+        this.identificadorVend = vendedor.getIdentificadorVend(); 
+        this.prefixoCepVend =  vendedor.getPrefixoCepVend();
+        this.cidadeVend = vendedor.getCidadeVend();
+        this.estadoVend = vendedor.getEstadoVend();    
     }
 }
 

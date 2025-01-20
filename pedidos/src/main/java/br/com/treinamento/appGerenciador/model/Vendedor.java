@@ -2,6 +2,7 @@ package br.com.treinamento.appGerenciador.model;
 
 import br.com.treinamento.appGerenciador.vendedor.dto.VendedorDadosAtualizacao;
 import br.com.treinamento.appGerenciador.vendedor.dto.VendedorDadosCadastro;
+import br.com.treinamento.appGerenciador.vendedor.dto.VendedorDadosPlanilha;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +26,10 @@ public class Vendedor {
 	private String nome;
 	private String email;
 	private String cpfVendedor;
+	private String identificadorVend;
+    private Long prefixoCepVend;
+    private String cidadeVend;
+    private String estadoVend;
 	private boolean ativo;
 
 	public Vendedor(VendedorDadosCadastro dados) {
@@ -39,6 +44,14 @@ public class Vendedor {
 		this.email = dados.getEmail();
 		this.cpfVendedor = dados.getCpfVendedor();
 		this.ativo = true;
+	}
+	
+	public Vendedor(VendedorDadosPlanilha dados) {
+		  this.identificadorVend = dados.getIdentificadorVend();
+	      this.prefixoCepVend = dados.getPrefixoCepVend();
+	      this.cidadeVend = dados.getCidadeVend();
+	      this.estadoVend = dados.getEstadoVend();
+	    this.ativo = true;
 	}
 
 	public void excluir() {

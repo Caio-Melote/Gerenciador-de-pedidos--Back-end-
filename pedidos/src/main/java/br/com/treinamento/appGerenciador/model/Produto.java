@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import br.com.treinamento.appGerenciador.produto.dto.ProdutoDadosAtualizacao;
 import br.com.treinamento.appGerenciador.produto.dto.ProdutoDadosCadastro;
+import br.com.treinamento.appGerenciador.produto.dto.ProdutoDadosPlanilha;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,6 +30,15 @@ public class Produto {
     private BigDecimal preco;  
     private String categoria;  
     private Integer codigoBarras;   
+  
+    private String identificador_prod;
+    private Long tamanho_nome;
+    private Long tamanho_descricao;
+    private Long quantidade_fotos;
+    private Long peso_gramas;
+    private Long comprimento_cm;
+    private Long altura_cm;
+    private Long largura_cm;
     private Boolean ativo; 
     
     public Produto(ProdutoDadosCadastro dados) {
@@ -37,6 +47,19 @@ public class Produto {
         this.preco = dados.getPreco();  
         this.categoria = dados.getCategoria();  
         this.codigoBarras = dados.getCodigoBarras();
+        this.ativo = true;
+    	}
+    
+    public Produto(ProdutoDadosPlanilha dados) {
+    	this.identificador_prod = dados.getIdentificador_prod();
+    	this.categoria = dados.getCategoria();
+    	this.tamanho_nome = dados.getTamanho_nome();
+    	this.tamanho_descricao = dados.getTamanho_descricao();
+    	this.quantidade_fotos = dados.getQuantidade_fotos();
+    	this.peso_gramas = dados.getPeso_gramas();
+    	this.comprimento_cm = dados.getComprimento_cm();
+    	this.altura_cm = dados.getAltura_cm();
+    	this.largura_cm = dados.getLargura_cm();
         this.ativo = true;
     	}
     
