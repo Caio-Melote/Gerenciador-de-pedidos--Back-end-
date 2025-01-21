@@ -2,6 +2,7 @@ package br.com.treinamento.appGerenciador.model;
 
 import br.com.treinamento.appGerenciador.cliente.dto.ClienteDadosAtualizacao;
 import br.com.treinamento.appGerenciador.cliente.dto.ClienteDadosCadastro;
+import br.com.treinamento.appGerenciador.cliente.dto.ClienteDadosPlanilha;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +28,11 @@ public class Cliente {
 	private String cpfCliente;
 	private String telefone;
 	private String endereco;
+	private String identificadorCliente;
+	private String idUnicoCliente;
+	private Long prefixoCepCliente;
+	private String cidadeCliente;
+	private String estadoCliente;
 	private boolean ativo;
 
 	public Cliente(ClienteDadosCadastro dados) {
@@ -38,6 +44,15 @@ public class Cliente {
 		this.ativo = true;
 	}
 	
+	public Cliente(ClienteDadosPlanilha dados) {
+		this.identificadorCliente = dados.getIdentificadorCliente();
+		this.idUnicoCliente = dados.getIdUnicoCliente();
+		this.prefixoCepCliente = dados.getPrefixoCepCliente();
+		this.cidadeCliente = dados.getCidadeCliente();
+		this.estadoCliente = dados.getEstadoCliente();
+		this.ativo = true;
+	}
+	
 	public Cliente(Cliente dados) {
 		this.nome = dados.getNome();
 		this.email = dados.getEmail();
@@ -46,6 +61,7 @@ public class Cliente {
 		this.endereco = dados.getEndereco();
 		this.ativo = true;
 	}
+
 
 	public void excluir() {
 		this.ativo = false;

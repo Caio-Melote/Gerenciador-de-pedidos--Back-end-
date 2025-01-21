@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.treinamento.appGerenciador.service.ClientePlanilhaService;
 import br.com.treinamento.appGerenciador.service.ProdutoPlanilhaService;
 import br.com.treinamento.appGerenciador.service.VendedorPlanilhaService;
 
@@ -19,6 +20,9 @@ public class PlanilhaController {
 	
 	@Autowired
 	ProdutoPlanilhaService produtoPlanilha;
+	
+	@Autowired
+	ClientePlanilhaService clientePlanilha;
 	
 	
 	@GetMapping
@@ -41,6 +45,9 @@ public class PlanilhaController {
 		} 
 		if(modelo.equals("produto")) {
 			retorno = produtoPlanilha.lerPlanilha();
+			return ResponseEntity.ok(retorno);
+		} if (modelo.equals("cliente")) {
+			retorno = clientePlanilha.lerPlanilha();
 			return ResponseEntity.ok(retorno);
 		}
 	
