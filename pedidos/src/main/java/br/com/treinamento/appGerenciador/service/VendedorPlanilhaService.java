@@ -1,7 +1,9 @@
 package br.com.treinamento.appGerenciador.service;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -34,7 +36,8 @@ public class VendedorPlanilhaService {
 			if (iteradorLinha.hasNext()) {
 				iteradorLinha.next();
 			}
-
+			
+			List<Vendedor> vendedores = new ArrayList<>();
 			while (iteradorLinha.hasNext()) {
 				Row linha = iteradorLinha.next();
 				
@@ -46,9 +49,11 @@ public class VendedorPlanilhaService {
 				VendedorDadosPlanilha vendedorDados = new VendedorDadosPlanilha(identificadorVend, prefixoCep, cidadeVend, estadoVend, true);
 
 				Vendedor vendedor = new Vendedor(vendedorDados);
-
-				vendedorRepository.save(vendedor);			
+				vendedores.add(vendedor);
 			}
+			
+			vendedorRepository.saveAll(vendedores);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "Falha na leitura!";

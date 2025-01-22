@@ -3,7 +3,9 @@ package br.com.treinamento.appGerenciador.service;
 import java.io.FileInputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -39,7 +41,8 @@ public class PedidoPlanilhaService {
 			if (iteradorLinha.hasNext()) {
 				iteradorLinha.next();
 			}
-
+			
+			List<Pedido> pedidos = new ArrayList<>();
 			while (iteradorLinha.hasNext()) {
 				Row linha = iteradorLinha.next();
 
@@ -72,9 +75,12 @@ public class PedidoPlanilhaService {
 						dataEntregaEstimada);
 
 				Pedido pedido = new Pedido(pedidoDados);
-
-				pedidoRepository.save(pedido);
+				pedidos.add(pedido);
+						
 			}
+			
+			pedidoRepository.saveAll(pedidos);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "Falha na leitura!";

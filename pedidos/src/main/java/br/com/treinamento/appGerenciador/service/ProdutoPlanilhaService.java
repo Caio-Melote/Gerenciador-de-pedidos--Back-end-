@@ -1,7 +1,9 @@
 package br.com.treinamento.appGerenciador.service;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -34,7 +36,8 @@ public class ProdutoPlanilhaService {
 			if (iteradorLinha.hasNext()) {
 				iteradorLinha.next();
 			}
-
+			
+			List<Produto> produtos = new ArrayList<>();
 			while (iteradorLinha.hasNext()) {
 				Row linha = iteradorLinha.next();
 				
@@ -51,9 +54,12 @@ public class ProdutoPlanilhaService {
 				ProdutoDadosPlanilha produtoDados = new ProdutoDadosPlanilha(identificador_prod, categoria, tamanho_nome, tamanho_descricao, quantidade_fotos, peso_gramas, comprimento_cm, altura_cm, largura_cm, true);
 
 				Produto prod = new Produto(produtoDados);
-
-				produtoRepository.save(prod);			
+				produtos.add(prod);
+							
 			}
+			
+			produtoRepository.saveAll(produtos);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "Falha na leitura!";

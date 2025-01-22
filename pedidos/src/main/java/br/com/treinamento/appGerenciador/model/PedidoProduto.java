@@ -1,6 +1,8 @@
 package br.com.treinamento.appGerenciador.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import br.com.treinamento.appGerenciador.pedidoProduto.dto.PedidoProdutoDadosPlanilha;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,7 +33,13 @@ public class PedidoProduto {
 	@JoinColumn(name = "id_produto")
 	private Produto produto;
 	private Integer quantidade;
-	private BigDecimal precoUnitario;
+    private String identificadorPedido;
+    private Long identificadorItemPedido;
+    private String identificadorVend;
+    private String identificadorProd;
+    private LocalDateTime dataEnvioLimite;
+    private BigDecimal precoUnitario;
+    private BigDecimal valorFrete;
 	private Boolean ativo;
 
 	public PedidoProduto(Pedido pedido, Produto produto, Integer quantidade) {
@@ -40,6 +48,18 @@ public class PedidoProduto {
 		this.produto = produto;
 		this.quantidade = quantidade;
 		this.precoUnitario = produto.getPreco();
+		this.ativo = true;
+	}
+	
+	public PedidoProduto(PedidoProdutoDadosPlanilha dados) {
+
+		this.identificadorPedido = dados.getIdentificadorPedido();
+		this.identificadorItemPedido = dados.getIdentificadorItemPedido();
+		this.identificadorVend =  dados.getIdentificadorVend();
+		this.identificadorProd = dados.getIdentificadorProd();
+		this.precoUnitario = dados.getPrecoUnitario();
+		this.dataEnvioLimite = dados.getDataEnvioLimite();
+		this.valorFrete =  dados.getValorFrete();
 		this.ativo = true;
 	}
 
