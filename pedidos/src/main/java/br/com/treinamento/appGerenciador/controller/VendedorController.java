@@ -1,7 +1,12 @@
 package br.com.treinamento.appGerenciador.controller;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,11 +45,23 @@ public class VendedorController {
 			@RequestParam(required = false) Long id,
 			@RequestParam(required = false) String email,
 			@RequestParam(required = false) String cpfVendedor,
-			@RequestParam(required = false, defaultValue = "true") String ativos) {
+			@RequestParam(required = false, defaultValue = "true") String ativos,
+	        @RequestParam(required = false, defaultValue = "id") String sortBy, 
+	        @RequestParam(required = false, defaultValue = "asc") String direction) {
 		
+		List<String> validSortFields = Arrays.asList("id", "nome", "cpfVendedor", "email", "cidadeVend");
+	    if (!validSortFields.contains(sortBy)) {
+	        return ResponseEntity.badRequest().body("Campo de ordenação inválido.");
+	    }
+	    
+	    Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+	    
 		boolean ativo = Boolean.valueOf(ativos);
-
-		var page = vendedorRepository.findAllByFilters(nome, id, email, cpfVendedor, ativo, paginacao).map(VendedorListagem::new);
+		
+		Pageable paginacaoComOrdenacao = PageRequest.of(paginacao.getPageNumber(), paginacao.getPageSize(), 
+	            sortDirection, sortBy);  
+		
+		var page = vendedorRepository.findAllByFilters(nome, id, email, cpfVendedor, ativo, paginacaoComOrdenacao).map(VendedorListagem::new);
 
 		VendedorRespostaPaginada<VendedorListagem> response = new VendedorRespostaPaginada<>(page);
 		return ResponseEntity.ok(response);

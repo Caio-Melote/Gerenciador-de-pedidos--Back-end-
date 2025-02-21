@@ -3,8 +3,13 @@ package br.com.treinamento.appGerenciador.controller;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import br.com.treinamento.appGerenciador.model.Cliente;
 import br.com.treinamento.appGerenciador.model.Pedido;
 import br.com.treinamento.appGerenciador.model.Vendedor;
@@ -45,48 +51,60 @@ public class PedidoController {
 	@SuppressWarnings("rawtypes")
 	@GetMapping
 	public ResponseEntity listar(@PageableDefault(size = 20) Pageable paginacao,
-			@RequestParam(required = false) String cliente,  
-			@RequestParam(required = false) String vendedor,
-			@RequestParam(required = false) Long id,
-			@RequestParam(required = false) LocalDate dataStartCompra, 
-			@RequestParam(required = false) LocalDate dataEndCompra,
-			@RequestParam(required = false) LocalDate dataStartEntrega, 
-			@RequestParam(required = false) LocalDate dataEndEntrega,
-			@RequestParam(required = false) BigDecimal valorTotal, 
-			@RequestParam(required = false) String status,
-			@RequestParam(required = false, defaultValue = "true") String ativos) {
-		
-		boolean ativo = Boolean.valueOf(ativos);
-		LocalDateTime dataStartCompraFormatada = null;
-		LocalDateTime dataEndCompraFormatada = null;
-		LocalDateTime dataStartEntregaFormatada = null;
-		LocalDateTime dataEndEntregaFormatada = null;
-		
-		if(dataStartCompra != null) {
-			dataStartCompraFormatada = dataStartCompra.atStartOfDay();
-		} 
-		
-		if(dataEndCompra != null) {
-			dataEndCompraFormatada = dataEndCompra.atStartOfDay();
-		} 
-		
-		if(dataStartEntrega != null) {
-			dataStartEntregaFormatada = dataStartEntrega.atStartOfDay();
-		} 
-		
-		if(dataEndEntrega != null) {
-			dataEndEntregaFormatada = dataEndEntrega.atStartOfDay();
-		} 
+	        @RequestParam(required = false) String cliente,  
+	        @RequestParam(required = false) String vendedor,
+	        @RequestParam(required = false) Long id,
+	        @RequestParam(required = false) LocalDate dataStartCompra, 
+	        @RequestParam(required = false) LocalDate dataEndCompra,
+	        @RequestParam(required = false) LocalDate dataStartEntrega, 
+	        @RequestParam(required = false) LocalDate dataEndEntrega,
+	        @RequestParam(required = false) BigDecimal valorTotal, 
+	        @RequestParam(required = false) String status,
+	        @RequestParam(required = false, defaultValue = "true") String ativos,
+	        @RequestParam(required = false, defaultValue = "id") String sortBy, 
+	        @RequestParam(required = false, defaultValue = "asc") String direction) {
 
-		
-		
-		var page = pedidoRepository
-				.findAllByFilters(cliente, vendedor, id, dataStartCompraFormatada, dataEndCompraFormatada, dataStartEntregaFormatada ,dataEndEntregaFormatada, valorTotal, status, ativo, paginacao)
-				.map(PedidoListagem::new);
 
-		PedidoRespostaPaginada<PedidoListagem> response = new PedidoRespostaPaginada<>(page);
-		return ResponseEntity.ok(response);
+	    List<String> validSortFields = Arrays.asList("id", "valorTotal", "dataCompra", "dataEntregaCliente", "status");
+	    if (!validSortFields.contains(sortBy)) {
+	        return ResponseEntity.badRequest().body("Campo de ordenação inválido.");
+	    }
+	    
+	    Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+	    
+	    boolean ativo = Boolean.valueOf(ativos);
+	    
+	    LocalDateTime dataStartCompraFormatada = null;
+	    LocalDateTime dataEndCompraFormatada = null;
+	    LocalDateTime dataStartEntregaFormatada = null;
+	    LocalDateTime dataEndEntregaFormatada = null;
+
+	    if(dataStartCompra != null) {
+	        dataStartCompraFormatada = dataStartCompra.atStartOfDay();
+	    } 
+	    if(dataEndCompra != null) {
+	        dataEndCompraFormatada = dataEndCompra.atStartOfDay();
+	    } 
+	    if(dataStartEntrega != null) {
+	        dataStartEntregaFormatada = dataStartEntrega.atStartOfDay();
+	    } 
+	    if(dataEndEntrega != null) {
+	        dataEndEntregaFormatada = dataEndEntrega.atStartOfDay();
+	    }
+
+	    Pageable paginacaoComOrdenacao = PageRequest.of(paginacao.getPageNumber(), paginacao.getPageSize(), 
+	            sortDirection, sortBy);  
+ 
+	    var page = pedidoRepository
+	            .findAllByFilters(cliente, vendedor, id, dataStartCompraFormatada, dataEndCompraFormatada, 
+	                              dataStartEntregaFormatada, dataEndEntregaFormatada, valorTotal, status, ativo, 
+	                              paginacaoComOrdenacao)
+	            .map(PedidoListagem::new);
+
+	    PedidoRespostaPaginada<PedidoListagem> response = new PedidoRespostaPaginada<>(page);
+	    return ResponseEntity.ok(response);
 	}
+
 
 	@SuppressWarnings("rawtypes")
 	@PostMapping

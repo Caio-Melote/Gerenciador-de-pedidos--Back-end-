@@ -38,8 +38,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 		    @Param("status") String status, 
 		    @Param("ativo") Boolean ativo,
 		    Pageable pageable);
-
-
+	
 	
 	Optional<Pedido> findByIdPedidoAndAtivoTrue(Long id);
 }

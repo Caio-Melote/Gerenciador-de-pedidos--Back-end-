@@ -24,7 +24,7 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long>{
 	            @Param("idCliente") Long id,
 	            @Param("telefone") String telefone,
 	            @Param("endereco") String endereco,
-	            @Param("ativo") boolean ativo,
+	            @Param("ativo") Boolean ativo,
 	            Pageable pageable);
 	 
 	 Optional<Cliente> findByIdClienteAndAtivoTrue(Long id);
