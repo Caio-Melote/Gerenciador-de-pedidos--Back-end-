@@ -28,6 +28,21 @@ public class ClienteDadosCadastro {
 	@NotBlank
 	private String endereco;
 	
+	@NotBlank
+	private String identificadorCliente;
+	
+	@NotBlank
+	private String idUnicoCliente;
+	
+	@NotNull
+	private Long prefixoCepCliente;
+	
+	@NotBlank
+	private String cidadeCliente;
+	
+	@NotBlank
+	private String estadoCliente;
+	
 	@NotNull
 	private boolean ativo;
 }

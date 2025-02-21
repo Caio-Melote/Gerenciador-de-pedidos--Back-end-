@@ -17,7 +17,15 @@ public class ProdutoListagem {
     private String descricao;
     private BigDecimal preco;  
     private String categoria; 
-    private Integer codigoBarras; 
+    private Integer codigoBarras;
+    private String identificadorProd;
+    private Long tamanhoNome;
+    private Long tamanhoDescricao;
+    private Long quantidadeFotos;
+    private Long pesoGramas;
+    private Long comprimentoCm;
+    private Long alturaCm;
+    private Long larguraCm;
 
     public ProdutoListagem(Produto produto) {
         this.idProduto = produto.getIdProduto(); 
@@ -26,6 +34,14 @@ public class ProdutoListagem {
         this.preco = produto.getPreco();   
         this.categoria = produto.getCategoria();
         this.codigoBarras = produto.getCodigoBarras();
+        this.identificadorProd = produto.getIdentificadorProd();
+        this.tamanhoNome = produto.getTamanhoNome();
+        this.tamanhoDescricao = produto.getTamanhoDescricao();
+        this.quantidadeFotos = produto.getQuantidadeFotos();
+        this.pesoGramas = produto.getPesoGramas();
+        this.comprimentoCm = produto.getComprimentoCm();
+        this.alturaCm = produto.getAlturaCm();
+        this.larguraCm = produto.getLarguraCm(); 
     }
 }
 

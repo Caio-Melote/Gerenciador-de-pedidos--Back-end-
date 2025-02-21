@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import br.com.treinamento.appGerenciador.cliente.dto.ClienteDadosAtualizacao;
 import br.com.treinamento.appGerenciador.cliente.dto.ClienteDadosCadastro;
 import br.com.treinamento.appGerenciador.cliente.dto.ClienteListagem;
@@ -40,10 +39,14 @@ public class ClienteController {
 			@RequestParam(required = false) String nome, 
 			@RequestParam(required = false) String email,
 			@RequestParam(required = false) String cpfCliente,
+			@RequestParam(required = false) Long id,
 			@RequestParam(required = false) String telefone,
-			@RequestParam(required = false) String endereco) {
+			@RequestParam(required = false) String endereco,
+			@RequestParam(required = false, defaultValue = "true") String ativos) {
+		
+		boolean ativo = Boolean.valueOf(ativos);
 
-		var page = clienteRepository.findAllByFilters(nome, email, cpfCliente, telefone, endereco, paginacao).map(ClienteListagem::new);
+		var page = clienteRepository.findAllByFilters(nome, email, cpfCliente, id, telefone, endereco, ativo, paginacao ).map(ClienteListagem::new);
 
 		ClienteRespostaPaginada<ClienteListagem> response = new ClienteRespostaPaginada<>(page);
 		return ResponseEntity.ok(response);

@@ -14,31 +14,31 @@ import lombok.Setter;
 public class ProdutoDadosPlanilha {
 	
 	@NotBlank
-	private String identificador_prod;
+	private String identificadorProd;
 	
 	@NotBlank
 	private String categoria;
 	
 	@NotNull
-    private Long tamanho_nome;
+    private Long tamanhoNome;
     
 	@NotNull
-	private Long tamanho_descricao;
+	private Long tamanhoDescricao;
     
 	@NotNull
-	private Long quantidade_fotos;
+	private Long quantidadeFotos;
     
 	@NotNull
-	private Long peso_gramas;
+	private Long pesoGramas;
     
 	@NotNull
-	private Long comprimento_cm;
+	private Long comprimentoCm;
     
 	@NotNull
-	private Long altura_cm;
+	private Long alturaCm;
     
 	@NotNull
-	private Long largura_cm;
+	private Long larguraCm;
     
 	@NotNull
 	private boolean ativo;

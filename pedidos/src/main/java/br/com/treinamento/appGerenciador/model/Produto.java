@@ -30,15 +30,14 @@ public class Produto {
     private BigDecimal preco;  
     private String categoria;  
     private Integer codigoBarras;   
-  
-    private String identificador_prod;
-    private Long tamanho_nome;
-    private Long tamanho_descricao;
-    private Long quantidade_fotos;
-    private Long peso_gramas;
-    private Long comprimento_cm;
-    private Long altura_cm;
-    private Long largura_cm;
+    private String identificadorProd;
+    private Long tamanhoNome;
+    private Long tamanhoDescricao;
+    private Long quantidadeFotos;
+    private Long pesoGramas;
+    private Long comprimentoCm;
+    private Long alturaCm;
+    private Long larguraCm;
     private Boolean ativo; 
     
     public Produto(ProdutoDadosCadastro dados) {
@@ -47,19 +46,27 @@ public class Produto {
         this.preco = dados.getPreco();  
         this.categoria = dados.getCategoria();  
         this.codigoBarras = dados.getCodigoBarras();
+        this.identificadorProd = dados.getIdentificadorProd();
+        this.tamanhoNome = dados.getTamanhoNome();
+        this.tamanhoDescricao = dados.getTamanhoDescricao();
+        this.quantidadeFotos = dados.getQuantidadeFotos();
+        this.pesoGramas = dados.getPesoGramas();
+        this.comprimentoCm = dados.getComprimentoCm();
+        this.alturaCm = dados.getAlturaCm();
+        this.larguraCm = dados.getAlturaCm();
         this.ativo = true;
     	}
     
     public Produto(ProdutoDadosPlanilha dados) {
-    	this.identificador_prod = dados.getIdentificador_prod();
+    	this.identificadorProd = dados.getIdentificadorProd();
     	this.categoria = dados.getCategoria();
-    	this.tamanho_nome = dados.getTamanho_nome();
-    	this.tamanho_descricao = dados.getTamanho_descricao();
-    	this.quantidade_fotos = dados.getQuantidade_fotos();
-    	this.peso_gramas = dados.getPeso_gramas();
-    	this.comprimento_cm = dados.getComprimento_cm();
-    	this.altura_cm = dados.getAltura_cm();
-    	this.largura_cm = dados.getLargura_cm();
+    	this.tamanhoNome = dados.getTamanhoNome();
+    	this.tamanhoDescricao = dados.getTamanhoDescricao();
+    	this.quantidadeFotos = dados.getQuantidadeFotos();
+    	this.pesoGramas = dados.getPesoGramas();
+    	this.comprimentoCm = dados.getComprimentoCm();
+    	this.alturaCm = dados.getAlturaCm();
+    	this.larguraCm = dados.getLarguraCm();
         this.ativo = true;
     	}
     
@@ -87,6 +94,38 @@ public class Produto {
 		
 		if (dados.getCodigoBarras() != null) {
 			this.codigoBarras = dados.getCodigoBarras();
+		}
+		
+        if (dados.getIdentificadorProd() != null) {
+			this.identificadorProd = dados.getIdentificadorProd();
+		}
+		
+		if (dados.getTamanhoNome() != null) {
+			this.tamanhoNome = dados.getTamanhoNome();
+		}
+		
+		if (dados.getTamanhoDescricao() != null) {
+			this.tamanhoDescricao = dados.getTamanhoDescricao();
+		}
+		
+		if (dados.getQuantidadeFotos() != null) {
+			this.quantidadeFotos = dados.getQuantidadeFotos();
+		}
+		
+		if (dados.getPesoGramas() != null) {
+			this.pesoGramas = dados.getPesoGramas();
+		}
+		
+		if (dados.getComprimentoCm() != null) {
+			this.comprimentoCm = dados.getComprimentoCm();
+		}
+		
+		if (dados.getAlturaCm() != null) {
+			this.alturaCm = dados.getAlturaCm();
+		}
+		
+		if (dados.getAlturaCm() != null) {
+			this.larguraCm = dados.getAlturaCm();
 		}
 		
 		if (dados.isAtivo()) {

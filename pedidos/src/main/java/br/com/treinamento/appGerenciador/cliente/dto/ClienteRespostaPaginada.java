@@ -1,9 +1,7 @@
 package br.com.treinamento.appGerenciador.cliente.dto;
 
 import java.util.List;
-
 import org.springframework.data.domain.Page;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

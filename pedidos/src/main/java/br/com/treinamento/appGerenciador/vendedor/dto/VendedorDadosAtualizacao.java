@@ -15,5 +15,9 @@ public class VendedorDadosAtualizacao {
     private String nome;
     private String email;
     private String cpfVendedor;  
+	private String identificadorVend;
+    private Long prefixoCepVend;
+    private String cidadeVend;
+    private String estadoVend;
     private boolean ativo;
 }

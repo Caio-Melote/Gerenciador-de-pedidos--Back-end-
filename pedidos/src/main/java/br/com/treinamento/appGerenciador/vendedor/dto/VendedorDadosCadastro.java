@@ -21,6 +21,18 @@ public class VendedorDadosCadastro {
     
 	@NotBlank
 	private String cpfVendedor;  
+	
+	@NotBlank
+	private String identificadorVend;
+	
+	@NotNull
+    private Long prefixoCepVend;
+    
+    @NotBlank
+    private String cidadeVend;
+    
+    @NotBlank
+    private String estadoVend;
     
 	@NotNull
 	private boolean ativo;

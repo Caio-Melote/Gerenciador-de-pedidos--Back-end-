@@ -37,11 +37,18 @@ public class ProdutoController {
 	@SuppressWarnings("rawtypes")
 	@GetMapping
 	public ResponseEntity listar(@PageableDefault(size = 20) Pageable paginacao,
-			@RequestParam(required = false) String nome, @RequestParam(required = false) String descricao,
-			@RequestParam(required = false) String categoria, @RequestParam(required = false) Integer codigoBarras,
-			@RequestParam(required = false) Double precoMinimo, @RequestParam(required = false) Double precoMaximo) {
+			@RequestParam(required = false) String nome,
+			@RequestParam(required = false) Long id,
+			@RequestParam(required = false) String descricao,
+			@RequestParam(required = false) String categoria, 
+			@RequestParam(required = false) Integer codigoBarras,
+			@RequestParam(required = false) Double precoMinimo,
+			@RequestParam(required = false) Double precoMaximo,
+			@RequestParam(required = false, defaultValue = "true") String ativos) {
+		
+		boolean ativo = Boolean.valueOf(ativos);
 
-		var page = produtoRepository.findAllByFilters(nome, descricao, categoria, codigoBarras, precoMinimo, precoMaximo, paginacao).map(ProdutoListagem::new);
+		var page = produtoRepository.findAllByFilters(nome, id, descricao, categoria, codigoBarras, precoMinimo, precoMaximo, ativo, paginacao).map(ProdutoListagem::new);
 
 		ProdutoRespostaPaginada<ProdutoListagem> response = new ProdutoRespostaPaginada<>(page);
 		return ResponseEntity.ok(response);

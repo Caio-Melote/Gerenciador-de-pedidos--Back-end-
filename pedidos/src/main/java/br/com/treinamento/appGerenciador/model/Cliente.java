@@ -41,6 +41,11 @@ public class Cliente {
 		this.cpfCliente = dados.getCpfCliente();
 		this.telefone = dados.getTelefone();
 		this.endereco = dados.getEndereco();
+		this.identificadorCliente = dados.getIdentificadorCliente();
+		this.idUnicoCliente = dados.getIdUnicoCliente();
+		this.prefixoCepCliente = dados.getPrefixoCepCliente();
+		this.cidadeCliente = dados.getCidadeCliente();
+		this.estadoCliente = dados.getEstadoCliente();
 		this.ativo = true;
 	}
 	

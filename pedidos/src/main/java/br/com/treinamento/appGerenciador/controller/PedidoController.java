@@ -2,7 +2,7 @@ package br.com.treinamento.appGerenciador.controller;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import br.com.treinamento.appGerenciador.model.Cliente;
 import br.com.treinamento.appGerenciador.model.Pedido;
 import br.com.treinamento.appGerenciador.model.Vendedor;
@@ -46,15 +45,43 @@ public class PedidoController {
 	@SuppressWarnings("rawtypes")
 	@GetMapping
 	public ResponseEntity listar(@PageableDefault(size = 20) Pageable paginacao,
-			@RequestParam(required = false) String cliente, 
+			@RequestParam(required = false) String cliente,  
 			@RequestParam(required = false) String vendedor,
-			@RequestParam(required = false) LocalDate dataStart, 
-			@RequestParam(required = false) LocalDate dataEnd,
+			@RequestParam(required = false) Long id,
+			@RequestParam(required = false) LocalDate dataStartCompra, 
+			@RequestParam(required = false) LocalDate dataEndCompra,
+			@RequestParam(required = false) LocalDate dataStartEntrega, 
+			@RequestParam(required = false) LocalDate dataEndEntrega,
 			@RequestParam(required = false) BigDecimal valorTotal, 
-			@RequestParam(required = false) String status) {
+			@RequestParam(required = false) String status,
+			@RequestParam(required = false, defaultValue = "true") String ativos) {
+		
+		boolean ativo = Boolean.valueOf(ativos);
+		LocalDateTime dataStartCompraFormatada = null;
+		LocalDateTime dataEndCompraFormatada = null;
+		LocalDateTime dataStartEntregaFormatada = null;
+		LocalDateTime dataEndEntregaFormatada = null;
+		
+		if(dataStartCompra != null) {
+			dataStartCompraFormatada = dataStartCompra.atStartOfDay();
+		} 
+		
+		if(dataEndCompra != null) {
+			dataEndCompraFormatada = dataEndCompra.atStartOfDay();
+		} 
+		
+		if(dataStartEntrega != null) {
+			dataStartEntregaFormatada = dataStartEntrega.atStartOfDay();
+		} 
+		
+		if(dataEndEntrega != null) {
+			dataEndEntregaFormatada = dataEndEntrega.atStartOfDay();
+		} 
 
+		
+		
 		var page = pedidoRepository
-				.findAllByFilters(cliente, vendedor, dataStart, dataEnd, valorTotal, status, paginacao)
+				.findAllByFilters(cliente, vendedor, id, dataStartCompraFormatada, dataEndCompraFormatada, dataStartEntregaFormatada ,dataEndEntregaFormatada, valorTotal, status, ativo, paginacao)
 				.map(PedidoListagem::new);
 
 		PedidoRespostaPaginada<PedidoListagem> response = new PedidoRespostaPaginada<>(page);
@@ -69,9 +96,11 @@ public class PedidoController {
 		Cliente cliente = pedidoService.validarClienteAtivo(dados.getIdCliente());
 		Vendedor vendedor = pedidoService.validarVendedorAtivo(dados.getIdVendedor());
 
-		Pedido pedido = new Pedido(cliente, vendedor, dados.getData(), dados.getValorTotal(), dados.getStatus());
+		Pedido pedido = new Pedido(cliente, vendedor, dados.getData(), dados.getValorTotal(), dados.getStatus(), dados.getIdentificadorPedido(), 
+				dados.getIdentificadorCliente(), dados.getDataCompra(), dados.getDataAprovacao(), dados.getDataEntregaTransportadora(), 
+				dados.getDataEntregaCliente(), dados.getDataEntregaEstimada());
 		pedidoService.salvarPedido(pedido);
-
+		
 		var uri = uriBuilder.path("/pedidoproduto/{id}").buildAndExpand(pedido.getIdPedido()).toUri();
 		return ResponseEntity.created(uri).body(new PedidoSemPaginacao(pedido));
 	}
@@ -90,7 +119,9 @@ public class PedidoController {
 			var vendedor = pedidoService.validarVendedorAtivo(dados.getIdVendedor());
 
 			Pedido pedido = pedidoOptional.get();
-			pedido.atualizarInformacoes(cliente, vendedor, dados.getData(), dados.getValorTotal(), dados.getStatus());
+			pedido.atualizarInformacoes(cliente, vendedor, dados.getData(), dados.getValorTotal(), dados.getStatus(), dados.getIdentificadorPedido(), 
+					dados.getIdentificadorCliente(), dados.getDataCompra(), dados.getDataAprovacao(), dados.getDataEntregaTransportadora(), 
+					dados.getDataEntregaCliente(), dados.getDataEntregaEstimada());
 
 			pedidoService.salvarPedido(pedido);
 

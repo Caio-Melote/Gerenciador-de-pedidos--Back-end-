@@ -36,6 +36,10 @@ public class Vendedor {
 		this.nome = dados.getNome();
 		this.email = dados.getEmail();
 		this.cpfVendedor = dados.getCpfVendedor();
+		this.identificadorVend = dados.getIdentificadorVend();
+		this.prefixoCepVend = dados.getPrefixoCepVend();
+		this.cidadeVend = dados.getCidadeVend();
+		this.estadoVend = dados.getEstadoVend();
 		this.ativo = true;
 	}
 	
@@ -68,10 +72,26 @@ public class Vendedor {
 			this.email = dados.getEmail();
 		}
 
+		if (dados.getIdentificadorVend() != null) {
+			this.identificadorVend = dados.getIdentificadorVend();
+		}
+		
+		if (dados.getPrefixoCepVend() != null) {
+			this.prefixoCepVend = dados.getPrefixoCepVend();
+		}
+		
+		if (dados.getCidadeVend() != null) {
+			this.cidadeVend = dados.getCidadeVend();
+		}
+		
+		if (dados.getEstadoVend() != null) {
+			this.estadoVend = dados.getEstadoVend();
+		}
+		
 		if (dados.getCpfVendedor() != null) {
 			this.cpfVendedor = dados.getCpfVendedor();
 		}
-
+		
 		if (dados.isAtivo()) {
 			this.ativo = dados.isAtivo();
 		}

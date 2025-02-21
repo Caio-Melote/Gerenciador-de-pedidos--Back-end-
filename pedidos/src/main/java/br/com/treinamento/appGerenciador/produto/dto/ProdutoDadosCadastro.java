@@ -31,6 +31,30 @@ public class ProdutoDadosCadastro {
     @NotNull
     private Integer codigoBarras;
     
+    @NotBlank
+    private String identificadorProd;
+    
+    @NotNull
+    private Long tamanhoNome;
+    
+    @NotNull
+    private Long tamanhoDescricao;
+    
+    @NotNull
+    private Long quantidadeFotos;
+    
+    @NotNull
+    private Long pesoGramas;
+    
+    @NotNull
+    private Long comprimentoCm;
+    
+    @NotNull
+    private Long alturaCm;
+    
+    @NotNull
+    private Long larguraCm;
+    
     @NotNull
     private boolean ativo;
 }

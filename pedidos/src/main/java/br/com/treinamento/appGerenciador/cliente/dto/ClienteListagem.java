@@ -17,7 +17,11 @@ public class ClienteListagem {
 	private String cpfCliente;
 	private String telefone;
 	private String endereco;
-	private boolean ativo;
+	private String identificadorCliente;
+	private String idUnicoCliente;
+	private Long prefixoCepCliente;
+	private String cidadeCliente;
+	private String estadoCliente;
 	
 	public ClienteListagem(Cliente cliente) {
         this.idCliente = cliente.getIdCliente(); 
@@ -25,6 +29,11 @@ public class ClienteListagem {
         this.email = cliente.getEmail(); 
         this.cpfCliente = cliente.getCpfCliente();   
         this.telefone = cliente.getTelefone();   
-        this.endereco = cliente.getEndereco();   
+        this.endereco = cliente.getEndereco();
+        this.identificadorCliente = cliente.getIdentificadorCliente();  
+        this.idUnicoCliente = cliente.getIdUnicoCliente();  
+        this.prefixoCepCliente = cliente.getPrefixoCepCliente();  
+        this.cidadeCliente = cliente.getCidadeCliente();  
+        this.estadoCliente = cliente.getEstadoCliente();  
     }
 }
